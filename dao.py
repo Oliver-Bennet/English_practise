@@ -39,3 +39,7 @@ def seed_flashcards():
 
 def load_flashcards():
     return Flashcard.query.all()
+
+def load_minimal_pairs():
+    with open("data/minimal_pairs.json", encoding="utf-8") as f:
+        return json.load(f)

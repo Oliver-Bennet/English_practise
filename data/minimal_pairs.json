@@ -1,0 +1,168 @@
+[
+  {
+    "id": "ship-sheep",
+    "word1": "ship",
+    "ipa1": "/ʃɪp/",
+    "word2": "sheep",
+    "ipa2": "/ʃiːp/",
+    "description": "/ɪ/ vs /iː/"
+  },
+  {
+    "id": "live-leave",
+    "word1": "live",
+    "ipa1": "/lɪv/",
+    "word2": "leave",
+    "ipa2": "/liːv/",
+    "description": "/ɪ/ vs /iː/"
+  },
+  {
+    "id": "sit-seat",
+    "word1": "sit",
+    "ipa1": "/sɪt/",
+    "word2": "seat",
+    "ipa2": "/siːt/",
+    "description": "/ɪ/ vs /iː/"
+  },
+  {
+    "id": "bit-beat",
+    "word1": "bit",
+    "ipa1": "/bɪt/",
+    "word2": "beat",
+    "ipa2": "/biːt/",
+    "description": "/ɪ/ vs /iː/"
+  },
+  {
+    "id": "fill-feel",
+    "word1": "fill",
+    "ipa1": "/fɪl/",
+    "word2": "feel",
+    "ipa2": "/fiːl/",
+    "description": "/ɪ/ vs /iː/"
+  },
+
+  {
+    "id": "pen-pan",
+    "word1": "pen",
+    "ipa1": "/pen/",
+    "word2": "pan",
+    "ipa2": "/pæn/",
+    "description": "/e/ vs /æ/"
+  },
+  {
+    "id": "bed-bad",
+    "word1": "bed",
+    "ipa1": "/bed/",
+    "word2": "bad",
+    "ipa2": "/bæd/",
+    "description": "/e/ vs /æ/"
+  },
+  {
+    "id": "men-man",
+    "word1": "men",
+    "ipa1": "/men/",
+    "word2": "man",
+    "ipa2": "/mæn/",
+    "description": "/e/ vs /æ/"
+  },
+
+  {
+    "id": "cap-cup",
+    "word1": "cap",
+    "ipa1": "/kæp/",
+    "word2": "cup",
+    "ipa2": "/kʌp/",
+    "description": "/æ/ vs /ʌ/"
+  },
+  {
+    "id": "bat-but",
+    "word1": "bat",
+    "ipa1": "/bæt/",
+    "word2": "but",
+    "ipa2": "/bʌt/",
+    "description": "/æ/ vs /ʌ/"
+  },
+  {
+    "id": "fan-fun",
+    "word1": "fan",
+    "ipa1": "/fæn/",
+    "word2": "fun",
+    "ipa2": "/fʌn/",
+    "description": "/æ/ vs /ʌ/"
+  },
+
+  {
+    "id": "full-fool",
+    "word1": "full",
+    "ipa1": "/fʊl/",
+    "word2": "fool",
+    "ipa2": "/fuːl/",
+    "description": "/ʊ/ vs /uː/"
+  },
+  {
+    "id": "pull-pool",
+    "word1": "pull",
+    "ipa1": "/pʊl/",
+    "word2": "pool",
+    "ipa2": "/puːl/",
+    "description": "/ʊ/ vs /uː/"
+  },
+  {
+    "id": "look-luke",
+    "word1": "look",
+    "ipa1": "/lʊk/",
+    "word2": "Luke",
+    "ipa2": "/luːk/",
+    "description": "/ʊ/ vs /uː/"
+  },
+
+  {
+    "id": "cot-caught",
+    "word1": "cot",
+    "ipa1": "/kɒt/",
+    "word2": "caught",
+    "ipa2": "/kɔːt/",
+    "description": "/ɒ/ vs /ɔː/"
+  },
+  {
+    "id": "stock-stalk",
+    "word1": "stock",
+    "ipa1": "/stɒk/",
+    "word2": "stalk",
+    "ipa2": "/stɔːk/",
+    "description": "/ɒ/ vs /ɔː/"
+  },
+
+  {
+    "id": "thin-thing",
+    "word1": "thin",
+    "ipa1": "/θɪn/",
+    "word2": "thing",
+    "ipa2": "/θɪŋ/",
+    "description": "/n/ vs /ŋ/"
+  },
+  {
+    "id": "sin-sing",
+    "word1": "sin",
+    "ipa1": "/sɪn/",
+    "word2": "sing",
+    "ipa2": "/sɪŋ/",
+    "description": "/n/ vs /ŋ/"
+  },
+
+  {
+    "id": "rice-rise",
+    "word1": "rice",
+    "ipa1": "/raɪs/",
+    "word2": "rise",
+    "ipa2": "/raɪz/",
+    "description": "/s/ vs /z/"
+  },
+  {
+    "id": "bus-buzz",
+    "word1": "bus",
+    "ipa1": "/bʌs/",
+    "word2": "buzz",
+    "ipa2": "/bʌz/",
+    "description": "/s/ vs /z/"
+  }
+]

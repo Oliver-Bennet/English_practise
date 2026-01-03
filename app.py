@@ -4,6 +4,8 @@ import json
 from flask import Flask, render_template, request, send_file, jsonify
 from gtts import gTTS
 import io
+
+import dao
 from models import db, Group
 from dao import seed_ipa_data, seed_flashcards
 
@@ -48,6 +50,11 @@ def flashcard():
     with open('data/flashcards.json', 'r', encoding='utf-8') as f:
         flashcards = json.load(f)
     return render_template('flashcard.html', flashcards=flashcards)
+
+@app.route('/minimal-pairs')
+def minimal_pairs():
+    pairs = dao.load_minimal_pairs()
+    return render_template('minimal_pairs.html', minimal_pairs=pairs)
 
 @app.route('/tts')
 def tts():

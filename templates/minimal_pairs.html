@@ -1,0 +1,277 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Minimal Pairs - Luyện Phân Biệt Âm{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        color: #333;
+        min-height: 100vh;
+    }
+    .pairs-container {
+        max-width: 1400px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+    .pair-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+    }
+    .pair-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    }
+    .word-box {
+        font-size: 2rem;   /* Nhỏ hơn, dễ nhìn */
+        font-weight: bold;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin: 10px 0;
+    }
+    .ipa {
+        font-size: 1.3rem;  /* Nhỏ hơn */
+        color: #555;
+        margin: 8px 0;
+    }
+    .description {
+        font-size: 0.95rem;
+        color: #666;
+        margin-top: 12px;
+        line-height: 1.4;
+    }
+    .practice-area {
+        background: rgba(255,255,255,0.95);
+        border-radius: 20px;
+        padding: 35px;
+        margin: 40px 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .current-word {
+        font-size: 2.8rem;  /* Nhỏ hơn, vừa phải */
+        font-weight: bold;
+        min-height: 100px;
+        color: #333;
+        margin: 20px 0;
+    }
+    #progress {
+        height: 10px;
+        background: #eee;
+        border-radius: 5px;
+        overflow: hidden;
+        display: none;
+        margin: 20px 0;
+    }
+    #progress-bar {
+        height: 100%;
+        background: #28a745;
+        width: 0;
+        transition: width 0.1s;
+    }
+    .alert {
+        border-radius: 12px;
+        font-size: 1.1rem;
+    }
+
+    /* 5 cặp 1 hàng trên desktop lớn */
+    @media (min-width: 1400px) {
+        .pair-col { flex: 0 0 20%; max-width: 20%; }
+    }
+    /* 4 cặp trên desktop */
+    @media (max-width: 1399px) and (min-width: 1200px) {
+        .pair-col { flex: 0 0 25%; max-width: 25%; }
+    }
+    /* 3 cặp trên tablet */
+    @media (max-width: 1199px) and (min-width: 992px) {
+        .pair-col { flex: 0 0 33.333%; max-width: 33.333%; }
+    }
+    /* 2 cặp trên mobile lớn */
+    @media (max-width: 991px) and (min-width: 576px) {
+        .pair-col { flex: 0 0 50%; max-width: 50%; }
+        .word-box { font-size: 1.8rem; padding: 14px; }
+        .current-word { font-size: 2.5rem; }
+    }
+    /* 1 cặp trên mobile nhỏ */
+    @media (max-width: 575px) {
+        .pair-col { flex: 0 0 100%; max-width: 100%; }
+        .word-box { font-size: 2rem; padding: 16px; }
+        .current-word { font-size: 2.4rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pairs-container">
+    <h1 class="text-center mb-4 text-dark"><i class="bi bi-ear-fill"></i> Minimal Pairs - Luyện Phân Biệt Âm Dễ Nhầm</h1>
+    <p class="text-center lead text-dark mb-5">Chọn một cặp để luyện nghe và nói sự khác biệt</p>
+
+    <div class="row">
+        {% for pair in minimal_pairs %}
+        <div class="pair-col mb-4">
+            <div class="pair-card" onclick="startPractice('{{ pair.id }}')">
+                <div class="word-box">{{ pair.word1 }}</div>
+                <div class="ipa">{{ pair.ipa1 }}</div>
+                <div class="h4 text-muted my-2">VS</div>
+                <div class="word-box">{{ pair.word2 }}</div>
+                <div class="ipa">{{ pair.ipa2 }}</div>
+                <div class="description">{{ pair.description }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="practice-area text-center d-none" id="practice-area">
+        <h2 class="mb-4 text-dark">Luyện nói: Nghe và đoán từ nào!</h2>
+        <p class="text-muted mb-4">App sẽ phát 1 trong 2 từ → bạn nói theo → mic kiểm tra</p>
+
+        <div class="current-word" id="current-word-display">Chọn một cặp để bắt đầu</div>
+
+        <div class="mt-4">
+            <button class="btn btn-primary btn-lg mx-2" id="btn-play-random">
+                <i class="bi bi-play-fill"></i> Phát ngẫu nhiên
+            </button>
+            <button class="btn btn-success btn-lg mx-2" id="btn-mic-practice">
+                <i class="bi bi-mic-fill"></i> Bấm để nói
+            </button>
+            <button class="btn btn-secondary btn-lg mx-2" id="btn-stop-practice">
+                <i class="bi bi-stop-fill"></i> Dừng luyện
+            </button>
+        </div>
+
+        <div id="progress"><div id="progress-bar"></div></div>
+        <div class="mt-4" id="feedback"></div>
+
+        <div class="stats text-dark mt-4">
+            Đúng: <span id="correct-count">0</span> | Sai: <span id="wrong-count">0</span>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-outline-dark btn-lg"><i class="bi bi-arrow-left"></i> Quay lại trang chính</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const minimalPairs = {{ minimal_pairs | tojson | safe }};
+
+    let currentPair = null;
+    let currentRandomWord = null;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let audioProgressInterval = null;
+
+    const practiceArea = document.getElementById('practice-area');
+    const currentWordDisplay = document.getElementById('current-word-display');
+    const btnPlayRandom = document.getElementById('btn-play-random');
+    const btnMicPractice = document.getElementById('btn-mic-practice');
+    const btnStopPractice = document.getElementById('btn-stop-practice');
+    const feedback = document.getElementById('feedback');
+    const progress = document.getElementById('progress');
+    const progressBar = document.getElementById('progress-bar');
+    const correctSpan = document.getElementById('correct-count');
+    const wrongSpan = document.getElementById('wrong-count');
+
+    function startPractice(pairId) {
+        currentPair = minimalPairs.find(p => p.id === pairId);
+        practiceArea.classList.remove('d-none');
+        currentWordDisplay.innerText = `Sẵn sàng luyện: ${currentPair.word1} vs ${currentPair.word2}`;
+        feedback.innerHTML = "";
+        window.scrollTo({ top: practiceArea.offsetTop - 100, behavior: 'smooth' });
+    }
+
+    function playRandomWord() {
+        if (!currentPair) return;
+        const words = [currentPair.word1, currentPair.word2];
+        currentRandomWord = words[Math.floor(Math.random() * words.length)];
+        currentWordDisplay.innerText = "Nghe kỹ và nói lại từ bạn nghe được...";
+        speakText(currentRandomWord);
+    }
+
+    function speakText(text) {
+        const audio = new Audio(`/tts?text=${encodeURIComponent(text)}`);
+        audio.play();
+    }
+
+    btnPlayRandom.onclick = playRandomWord;
+
+    btnStopPractice.onclick = () => {
+        practiceArea.classList.add('d-none');
+        currentPair = null;
+        currentRandomWord = null;
+        feedback.innerHTML = "";
+    };
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = SpeechRec ? new SpeechRec() : null;
+    if (recognition) recognition.lang = 'en-GB';
+
+    btnMicPractice.onclick = () => {
+        if (!currentRandomWord) {
+            alert("Hãy nhấn 'Phát ngẫu nhiên' trước!");
+            return;
+        }
+        recognition.start();
+        btnMicPractice.innerText = "Đang nghe...";
+        btnMicPractice.disabled = true;
+        progress.style.display = 'block';
+        progressBar.style.width = '0%';
+        feedback.innerHTML = "";
+
+        let width = 0;
+        audioProgressInterval = setInterval(() => {
+            width += 5;
+            progressBar.style.width = `${width}%`;
+            if (width >= 100) clearInterval(audioProgressInterval);
+        }, 200);
+    };
+
+    function normalize(text) {
+        return text.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]/g, '');
+    }
+
+    if (recognition) {
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript.trim();
+            const result = normalize(transcript);
+            const target = normalize(currentRandomWord);
+
+            clearInterval(audioProgressInterval);
+
+            if (result === target) {
+                feedback.innerHTML = `<div class="alert alert-success">CHÍNH XÁC! 🎉 Bạn nói đúng: <strong>${currentRandomWord}</strong></div>`;
+                correctCount++;
+                correctSpan.innerText = correctCount;
+            } else {
+                feedback.innerHTML = `
+                    <div class="alert alert-warning">
+                        Sai rồi! 😅<br>
+                        Bạn nói: <strong>${transcript}</strong><br>
+                        Từ đúng là: <strong>${currentRandomWord}</strong><br>
+                        Hãy chú ý sự khác biệt giữa <strong>${currentPair.word1}</strong> và <strong>${currentPair.word2}</strong>
+                    </div>`;
+                wrongCount++;
+                wrongSpan.innerText = wrongCount;
+            }
+        };
+
+        recognition.onend = () => {
+            btnMicPractice.innerText = "Bấm để nói";
+            btnMicPractice.disabled = false;
+            progress.style.display = 'none';
+        };
+    }
+</script>
+{% endblock %}
