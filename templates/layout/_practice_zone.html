@@ -1,0 +1,21 @@
+<div class="practice-zone card p-4 mt-5 shadow">
+    <p class="fs-5">Học cách phát âm:</p>
+    <div class="guide text-muted fs-5" id="guide">{% block guide_text %}Chọn một âm hoặc gõ từ ở sidebar{% endblock %}</div>
+
+    <p class="mt-4">{% block ipa_label %}Nhấn vào phiên âm để nghe (nếu có):{% endblock %}</p>
+    <div class="ipa-display bg-light d-inline-block" id="target-ipa">---</div>
+
+    <div class="examples mt-4" id="examples"></div>
+
+    <p class="mt-4 fs-5">Luyện đọc to từ:</p>
+    <div class="word-display text-center my-4" id="target-word">---</div>
+
+    <div class="text-center">
+        <button class="btn btn-primary btn-lg mx-2" id="btn-play">Nghe mẫu từ</button>
+        <button class="btn btn-success btn-lg mx-2" id="btn-mic">Bấm để nói</button>
+    </div>
+    <div class="mt-3" id="progress"><div id="progress-bar"></div></div>
+    <div class="mt-4 fs-4" id="feedback"></div>
+</div>
+
+<div class="text-center mt-5 fs-4 text-muted" id="stats">Đúng: 0 | Sai: 0</div>

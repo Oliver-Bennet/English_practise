@@ -1,0 +1,207 @@
+{% extends "layout/base.html" %}
+
+{% block title %}IPA Pronunciation Master{% endblock %}
+
+{% block content %}
+<h1 class="text-center text-primary mb-4">IPA PRONUNCIATION MASTER</h1>
+<p class="text-center text-muted mb-5">Chọn âm IPA hoặc dùng sidebar để luyện tự do</p>
+
+<div id="ipa-section">
+    {% for group in groups %}
+    <div class="mb-5">
+        <h3 class="text-primary border-bottom pb-2">{{ group.title }}</h3>
+        <div class="row row-cols-4 row-cols-md-6 row-cols-lg-8 g-3" id="{{ group.id }}">
+            {% for item in group['items'] %}
+            <div class="col">
+                <div class="ipa-card bg-light border"
+                     onclick='setCurrentSound({{ item|tojson|safe }}, this)'>
+                    {{ item.sound }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="text-center my-4">
+        <button class="btn btn-warning btn-lg" id="btn-random">Luyện ngẫu nhiên</button>
+    </div>
+</div>
+
+{% include 'layout/_practice_zone.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentItem = null;
+    let currentWord = "";
+    let correctCount = 0;
+    let wrongCount = 0;
+    let audioProgressInterval = null;
+
+    const wordDisplay = document.getElementById('target-word');
+    const ipaDisplay = document.getElementById('target-ipa');
+    const examplesDiv = document.getElementById('examples');
+    const guideDisplay = document.getElementById('guide');
+    const btnMic = document.getElementById('btn-mic');
+    const btnPlay = document.getElementById('btn-play');
+    const btnRandom = document.getElementById('btn-random');
+    const feedback = document.getElementById('feedback');
+    const progress = document.getElementById('progress');
+    const progressBar = document.getElementById('progress-bar');
+    const stats = document.getElementById('stats');
+    const customInput = document.getElementById('custom-word');
+    const btnPracticeCustom = document.getElementById('btn-practice-custom');
+
+    const groups = {{ groups|tojson|safe }};
+
+    // Luyện từ tự do
+    btnPracticeCustom.onclick = () => {
+        let word = customInput.value.trim();
+        if (!word) return alert("Hãy gõ một từ tiếng Anh!");
+        practiceWord(word.toLowerCase());
+        customInput.value = '';
+    };
+
+    customInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') btnPracticeCustom.click();
+    });
+
+    function practiceWord(word) {
+        document.querySelectorAll('.ipa-card').forEach(c => c.classList.remove('active', 'bg-success', 'text-white'));
+        currentItem = null;
+        currentWord = word;
+        wordDisplay.innerText = word.charAt(0).toUpperCase() + word.slice(1);
+        ipaDisplay.innerText = "---";
+        ipaDisplay.onclick = null;
+        guideDisplay.innerText = "Luyện phát âm từ tự do – Đọc to và rõ ràng nhé!";
+        examplesDiv.innerHTML = "";
+        feedback.innerHTML = "";
+    }
+
+    function setCurrentSound(item, clickedCard = null) {
+        document.querySelectorAll('.ipa-card').forEach(c => c.classList.remove('active', 'bg-success', 'text-white'));
+        if (clickedCard) clickedCard.classList.add('active', 'bg-success', 'text-white');
+
+        currentItem = item;
+        currentWord = item.words[Math.floor(Math.random() * item.words.length)].toLowerCase();
+
+        wordDisplay.innerText = currentWord.charAt(0).toUpperCase() + currentWord.slice(1);
+        ipaDisplay.innerText = item.ipa;
+        ipaDisplay.onclick = () => speakText(item.approx);
+
+        guideDisplay.innerText = item.guide;
+        feedback.innerHTML = "";
+
+        examplesDiv.innerHTML = "<strong class='d-block mb-2'>Các từ ví dụ (nhấn để luyện):</strong>";
+        item.words.forEach(w => {
+            const span = document.createElement('span');
+            span.className = 'example-word badge';
+            span.innerText = w.charAt(0).toUpperCase() + w.slice(1);
+            span.onclick = () => {
+                currentWord = w.toLowerCase();
+                wordDisplay.innerText = w.charAt(0).toUpperCase() + w.slice(1);
+                speakText(w);
+            };
+            examplesDiv.appendChild(span);
+        });
+    }
+
+    function speakText(text) {
+        if (!text) return;
+        const audio = new Audio(`/tts?text=${encodeURIComponent(text)}`);
+        audio.play();
+    }
+
+    btnPlay.onclick = () => {
+        if (!currentWord) return alert("Chọn hoặc gõ từ để nghe mẫu!");
+        speakText(wordDisplay.innerText);
+    };
+
+    btnRandom.onclick = () => {
+        const flatItems = groups.flatMap(g => g.items.map(i => ({item: i, groupId: g.id})));
+        const random = flatItems[Math.floor(Math.random() * flatItems.length)];
+        const randomItem = random.item;
+        const cards = document.querySelectorAll(`#${random.groupId} .ipa-card`);
+        const cardIndex = groups.find(g => g.id === random.groupId).items.findIndex(i => i.sound === randomItem.sound);
+        if (cards[cardIndex]) {
+            setCurrentSound(randomItem, cards[cardIndex]);
+        } else {
+            setCurrentSound(randomItem);
+        }
+    };
+
+    // ================== SPEECH RECOGNITION HOÀN CHỈNH ==================
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = SpeechRec ? new SpeechRec() : null;
+
+    if (!recognition) {
+        btnMic.disabled = true;
+        btnMic.innerText = "Trình duyệt không hỗ trợ mic";
+    } else {
+        recognition.lang = 'en-GB'; // Giọng Anh-Anh để chuẩn hơn
+        recognition.interimResults = false;
+        recognition.continuous = false;
+    }
+
+    btnMic.onclick = () => {
+        if (!currentWord) {
+            alert("Chọn hoặc gõ một từ để luyện nói!");
+            return;
+        }
+
+        recognition.start();
+        btnMic.innerText = "Đang nghe...";
+        btnMic.disabled = true;
+        progress.style.display = 'block';
+        progressBar.style.width = '0%';
+        feedback.innerHTML = "";
+
+        let width = 0;
+        audioProgressInterval = setInterval(() => {
+            width += 5;
+            progressBar.style.width = `${width}%`;
+            if (width >= 100) clearInterval(audioProgressInterval);
+        }, 200);
+    };
+
+    if (recognition) {
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript.trim();
+            const result = transcript.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]/g, '');
+            const target = currentWord.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]/g, '');
+
+            clearInterval(audioProgressInterval);
+
+            if (result === target) {
+                feedback.innerHTML = `<div class="alert alert-success">TUYỆT VỜI! Chính xác hoàn hảo 🎉</div>`;
+                correctCount++;
+            } else {
+                feedback.innerHTML = `
+                    <div class="alert alert-warning">
+                        Gần đúng rồi! 😊<br>
+                        <strong>Bạn nói:</strong> "${transcript}"<br>
+                        <strong>Đáp án:</strong> "${currentWord.charAt(0).toUpperCase() + currentWord.slice(1)}"
+                    </div>`;
+                wrongCount++;
+            }
+            stats.innerText = `Đúng: ${correctCount} | Sai: ${wrongCount}`;
+        };
+
+        recognition.onend = () => {
+            btnMic.innerText = "Bấm để nói";
+            btnMic.disabled = false;
+            progress.style.display = 'none';
+            clearInterval(audioProgressInterval);
+        };
+
+        recognition.onerror = (event) => {
+            btnMic.innerText = "Bấm để nói";
+            btnMic.disabled = false;
+            progress.style.display = 'none';
+            feedback.innerHTML = `<div class="alert alert-danger">Lỗi: ${event.error}. Thử lại nhé!</div>`;
+            clearInterval(audioProgressInterval);
+        };
+    }
+</script>
+{% endblock %}

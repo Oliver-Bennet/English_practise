@@ -1,0 +1,373 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Flashcard - Ôn Từ Vựng & Phát Âm{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        min-height: 100vh;
+    }
+    .card-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+    .flashcard {
+        height: 420px;
+        perspective: 1000px;
+        cursor: pointer;
+    }
+    .flashcard-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transform-style: preserve-3d;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .flashcard.flipped .flashcard-inner {
+        transform: rotateY(180deg);
+    }
+    .front, .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 40px;
+    }
+    .front {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        color: #333;
+    }
+    .back {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        color: #333;
+        transform: rotateY(180deg);
+    }
+    .word {
+        font-size: 4.5rem;
+        font-weight: bold;
+    }
+    .ipa {
+        font-size: 2rem;
+        margin: 20px 0;
+        color: #555;
+    }
+    .meaning {
+        font-size: 2rem;
+        font-style: italic;
+    }
+    .controls {
+        margin-top: 40px;
+    }
+    .stats {
+        font-size: 1.4rem;
+        margin-top: 30px;
+    }
+    #progress {
+        height: 10px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 5px;
+        overflow: hidden;
+        display: none;
+        margin: 20px 0;
+    }
+    #progress-bar {
+        height: 100%;
+        background: #28a745;
+        width: 0;
+        transition: width 0.1s;
+    }
+    .alert {
+        border-radius: 12px;
+    }
+    @media (max-width: 768px) {
+        .word { font-size: 3rem; }
+        .flashcard { height: 380px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card-container">
+    <h1 class="text-center mb-4"><i class="bi bi-card-list"></i> Flashcard - Ôn Từ Vựng & Phát Âm</h1>
+
+    <!-- Thanh thêm từ mới -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="input-group">
+                <input type="text" class="form-control form-control-lg" id="new-word-input" placeholder="Gõ từ mới muốn thêm (vd: extraordinary)">
+                <button class="btn btn-success btn-lg" id="btn-add-word">
+                    <i class="bi bi-plus-circle"></i> Thêm vào Flashcard
+                </button>
+            </div>
+            <small class="text-light d-block text-center mt-2">Từ mới sẽ được lưu tạm trong trình duyệt này</small>
+        </div>
+    </div>
+
+    <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+            <div class="front">
+                <div class="word" id="front-word">Nhấn Space hoặc nút Lật thẻ để bắt đầu</div>
+            </div>
+            <div class="back">
+                <div class="word" id="back-word"></div>
+                <div class="ipa" id="back-ipa"></div>
+                <div class="meaning" id="back-meaning"></div>
+                <div class="mt-4">
+                    <button class="btn btn-lg btn-primary mx-2" id="btn-play-back">
+                        <i class="bi bi-volume-up-fill"></i> Nghe từ
+                    </button>
+                    <button class="btn btn-lg btn-success mx-2" id="btn-mic-back">
+                        <i class="bi bi-mic-fill"></i> Luyện nói
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="progress"><div id="progress-bar"></div></div>
+    <div class="text-center" id="feedback"></div>
+
+    <div class="controls text-center">
+        <button class="btn btn-outline-light btn-lg mx-2" id="btn-previous" title="Quay lại thẻ trước">
+            <i class="bi bi-arrow-left-circle-fill"></i> Previous
+        </button>
+        <button class="btn btn-outline-light btn-lg mx-2" id="btn-flip">
+            <i class="bi bi-arrow-repeat"></i> Lật thẻ (Space)
+        </button>
+        <button class="btn btn-warning btn-lg mx-2" id="btn-skip" title="Tôi biết rồi, bỏ qua từ này">
+            <i class="bi bi-check2-circle"></i> Bỏ qua
+        </button>
+        <button class="btn btn-outline-light btn-lg mx-2" id="btn-next">
+            <i class="bi bi-skip-forward-fill"></i> Tiếp theo
+        </button>
+    </div>
+
+    <div class="stats text-center">
+        <span id="stats">Đúng: 0 | Sai: 0</span> |
+        <span id="total-cards">Tổng thẻ: <span id="card-count">0</span></span>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-secondary btn-lg"><i class="bi bi-arrow-left"></i> Quay lại trang IPA</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Load flashcard từ server (từ data/flashcards.json)
+    let flashcards = {{ flashcards | tojson | safe }};
+
+    // Gộp với localStorage (nếu người dùng đã thêm từ mới)
+    const saved = localStorage.getItem('customFlashcards');
+    if (saved) {
+        const localCards = JSON.parse(saved);
+        localCards.forEach(card => {
+            if (!flashcards.some(c => c.word === card.word)) {
+                flashcards.push(card);
+            }
+        });
+    }
+
+    let history = [];
+    let currentCard = null;
+    let skippedCards = new Set();
+    let correctCount = 0;
+    let wrongCount = 0;
+    let audioProgressInterval = null;
+
+    const frontWord = document.getElementById('front-word');
+    const backWord = document.getElementById('back-word');
+    const backIpa = document.getElementById('back-ipa');
+    const backMeaning = document.getElementById('back-meaning');
+    const flashcard = document.getElementById('flashcard');
+    const btnFlip = document.getElementById('btn-flip');
+    const btnNext = document.getElementById('btn-next');
+    const btnPrevious = document.getElementById('btn-previous');
+    const btnSkip = document.getElementById('btn-skip');
+    const btnPlayBack = document.getElementById('btn-play-back');
+    const btnMicBack = document.getElementById('btn-mic-back');
+    const feedback = document.getElementById('feedback');
+    const progress = document.getElementById('progress');
+    const progressBar = document.getElementById('progress-bar');
+    const stats = document.getElementById('stats');
+    const cardCount = document.getElementById('card-count');
+    const newWordInput = document.getElementById('new-word-input');
+    const btnAddWord = document.getElementById('btn-add-word');
+
+    function updateCardCount() {
+        cardCount.innerText = flashcards.length;
+    }
+
+    function saveToLocalStorage() {
+        localStorage.setItem('customFlashcards', JSON.stringify(flashcards));
+    }
+
+    function loadRandomCard(skipSkipped = true) {
+        if (flashcards.length === 0) {
+            frontWord.innerText = "Chưa có từ nào!";
+            return;
+        }
+
+        let available = flashcards.filter(card => !skipSkipped || !skippedCards.has(card.word));
+        if (available.length === 0) {
+            skippedCards.clear();
+            available = flashcards;
+            feedback.innerHTML = `<div class="alert alert-info">Đã reset các từ bị bỏ qua!</div>`;
+        }
+
+        currentCard = available[Math.floor(Math.random() * available.length)];
+        history.push(currentCard);
+
+        frontWord.innerText = currentCard.word.charAt(0).toUpperCase() + currentCard.word.slice(1);
+        backWord.innerText = currentCard.word.charAt(0).toUpperCase() + currentCard.word.slice(1);
+        backIpa.innerText = currentCard.ipa || "(không có IPA)";
+        backMeaning.innerText = currentCard.meaning || "(chưa có nghĩa)";
+
+        flashcard.classList.remove('flipped');
+        feedback.innerHTML = "";
+        progress.style.display = 'none';
+    }
+
+    function speakText(text) {
+        if (!text) return;
+        const audio = new Audio(`/tts?text=${encodeURIComponent(text)}`);
+        audio.play();
+    }
+
+    btnPlayBack.onclick = () => speakText(currentCard.word);
+    btnFlip.onclick = () => flashcard.classList.toggle('flipped');
+    btnNext.onclick = loadRandomCard;
+    btnSkip.onclick = () => {
+        skippedCards.add(currentCard.word);
+        feedback.innerHTML = `<div class="alert alert-warning">Đã bỏ qua từ "<strong>${currentCard.word}</strong>" trong phiên này.</div>`;
+        loadRandomCard();
+    };
+
+    btnPrevious.onclick = () => {
+        if (history.length > 1) {
+            history.pop();
+            currentCard = history[history.length - 1];
+            frontWord.innerText = currentCard.word.charAt(0).toUpperCase() + currentCard.word.slice(1);
+            backWord.innerText = currentCard.word.charAt(0).toUpperCase() + currentCard.word.slice(1);
+            backIpa.innerText = currentCard.ipa || "(không có IPA)";
+            backMeaning.innerText = currentCard.meaning || "(chưa có nghĩa)";
+            flashcard.classList.remove('flipped');
+            feedback.innerHTML = `<div class="alert alert-info">Đã quay lại thẻ trước!</div>`;
+        }
+    };
+
+    btnAddWord.onclick = () => {
+        let word = newWordInput.value.trim().toLowerCase();
+        if (!word) {
+            alert("Hãy gõ một từ tiếng Anh!");
+            return;
+        }
+        if (flashcards.some(c => c.word === word)) {
+            alert(`Từ "${word}" đã tồn tại!`);
+            return;
+        }
+
+        flashcards.push({
+            word: word,
+            ipa: "(tự tra)",
+            meaning: "(tự thêm nghĩa)"
+        });
+
+        saveToLocalStorage();
+        updateCardCount();
+        newWordInput.value = '';
+        feedback.innerHTML = `<div class="alert alert-success">Đã thêm từ "<strong>${word}</strong>" thành công!</div>`;
+    };
+
+    newWordInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') btnAddWord.click();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            flashcard.classList.toggle('flipped');
+        }
+    });
+
+    // Speech Recognition
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = SpeechRec ? new SpeechRec() : null;
+    if (recognition) recognition.lang = 'en-US';
+
+    btnMicBack.onclick = () => {
+        if (!currentCard) {
+            alert("Chưa có thẻ nào! Nhấn Tiếp theo để bắt đầu.");
+            return;
+        }
+        recognition.start();
+        btnMicBack.innerText = "Đang nghe...";
+        btnMicBack.disabled = true;
+        progress.style.display = 'block';
+        progressBar.style.width = '0%';
+        feedback.innerHTML = "";
+    };
+
+    function normalizeSpeech(text) {
+        return text.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]/g, '').trim();
+    }
+
+    if (recognition) {
+        recognition.onresult = event => {
+            if (!event.results[0].isFinal) return;
+            let transcript = event.results[0][0].transcript;
+            let result = normalizeSpeech(transcript);
+            let target = normalizeSpeech(currentCard.word);
+
+            stopRecognition();
+
+            if (result === target) {
+                feedback.innerHTML = `<div class="alert alert-success mt-3">TUYỆT VỜI! Chính xác hoàn hảo 🎉</div>`;
+                correctCount++;
+            } else {
+                feedback.innerHTML = `<div class="alert alert-warning mt-3">Gần đúng rồi! 😊<br>Bạn nói: <b>“${transcript}”</b><br>Đáp án: <b>“${currentCard.word}”</b></div>`;
+                wrongCount++;
+            }
+            stats.innerText = `Đúng: ${correctCount} | Sai: ${wrongCount}`;
+        };
+
+        recognition.onend = stopRecognition;
+        recognition.onerror = () => {
+            stopRecognition();
+            feedback.innerHTML = `<div class="alert alert-danger mt-3">Không nghe rõ, thử lại nhé!</div>`;
+        };
+
+        recognition.onaudiostart = () => {
+            let width = 0;
+            if (audioProgressInterval) clearInterval(audioProgressInterval);
+            audioProgressInterval = setInterval(() => {
+                width += 8;
+                progressBar.style.width = `${width}%`;
+                if (width >= 100) clearInterval(audioProgressInterval);
+            }, 400);
+        };
+    }
+
+    function stopRecognition() {
+        if (recognition) recognition.stop();
+        btnMicBack.innerText = "Luyện nói";
+        btnMicBack.disabled = false;
+        progress.style.display = 'none';
+    }
+
+    // Khởi động
+    updateCardCount();
+    loadRandomCard();
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+<div class="sidebar" id="sidebar">
+    <h4 class="text-center mb-4"><i class="bi bi-mic-fill"></i> Pronunciation Master</h4>
+    <hr class="border-secondary">
+
+    <nav class="nav flex-column">
+        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="/">
+            <i class="bi bi-grid-3x3-gap-fill"></i> Ôn luyện IPA
+        </a>
+        <a class="nav-link {% if request.endpoint == 'flashcard' %}active{% endif %}" href="/flashcard">
+            <i class="bi bi-card-list"></i> Ôn Flashcard
+        </a>
+        <a class="nav-link" href="#">
+            <i class="bi bi-ear"></i> Minimal Pairs (sắp có)
+        </a>
+    </nav>
+
+    <hr class="border-secondary">
+
+    <div class="mb-3">
+        <label for="custom-word" class="form-label fw-bold">Luyện từ tự do</label>
+        <input type="text" class="form-control bg-dark text-white border-secondary" id="custom-word" placeholder="Gõ từ tiếng Anh...">
+        <button class="btn btn-info w-100 mt-2" id="btn-practice-custom">
+            <i class="bi bi-volume-up"></i> Luyện từ này
+        </button>
+    </div>
+</div>

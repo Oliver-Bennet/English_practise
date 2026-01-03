@@ -1,0 +1,81 @@
+{
+  "monophthongs": {
+    "title": "Monophthongs (Nguyên âm đơn)",
+    "items": [
+      {"sound": "iː", "words": ["fleece", "see", "tree", "machine"], "ipa": "/iː/", "guide": "Âm dài, căng môi (như 'i' trong 'xiên' nhưng dài hơn).", "approx": "ee"},
+      {"sound": "ɪ", "words": ["kit", "ship", "sit", "fish"], "ipa": "/ɪ/", "guide": "Âm ngắn, thư giãn (như 'i' trong 'xin').", "approx": "i"},
+      {"sound": "e", "words": ["dress", "bed", "red", "head"], "ipa": "/e/", "guide": "Âm ngắn, miệng mở vừa (như 'e' trong 'em').", "approx": "e"},
+      {"sound": "æ", "words": ["trap", "cat", "hat", "bad"], "ipa": "/æ/", "guide": "Âm ngắn, miệng mở rộng (như 'a' trong 'xa' ngắn).", "approx": "a"},
+      {"sound": "ʌ", "words": ["strut", "cup", "sun", "love"], "ipa": "/ʌ/", "guide": "Âm ngắn, trung tính (như 'ơ' trong 'cơm').", "approx": "u"},
+      {"sound": "ɑː", "words": ["palm", "far", "car", "start"], "ipa": "/ɑː/", "guide": "Âm dài, miệng mở (như 'a' trong 'xa' dài).", "approx": "aa"},
+      {"sound": "ɒ", "words": ["lot", "hot", "stop", "box"], "ipa": "/ɒ/", "guide": "Âm ngắn, môi tròn (như 'o' trong 'ô' ngắn).", "approx": "o"},
+      {"sound": "ɔː", "words": ["thought", "door", "more", "law"], "ipa": "/ɔː/", "guide": "Âm dài, môi tròn (như 'o' trong 'ô' dài).", "approx": "aw"},
+      {"sound": "ʊ", "words": ["foot", "good", "book", "could"], "ipa": "/ʊ/", "guide": "Âm ngắn, môi tròn nhẹ (như 'u' ngắn).", "approx": "oo"},
+      {"sound": "uː", "words": ["goose", "food", "moon", "true"], "ipa": "/uː/", "guide": "Âm dài, môi tròn (như 'u' trong 'ú' dài).", "approx": "oo"},
+      {"sound": "ɜː", "words": ["nurse", "bird", "work", "learn"], "ipa": "/ɜː/", "guide": "Âm dài, trung ương (như 'ơ' dài trong 'cơ').", "approx": "er"},
+      {"sound": "ə", "words": ["about", "banana", "teacher", "comma"], "ipa": "/ə/", "guide": "Âm schwa, yếu nhất (như 'ơ' mờ).", "approx": "uh"}
+    ]
+  },
+  "diphthongs": {
+    "title": "Diphthongs (Nguyên âm đôi)",
+    "items": [
+      {"sound": "eɪ", "words": ["face", "day", "rain", "they"], "ipa": "/eɪ/", "guide": "Từ /e/ trượt sang /ɪ/ (như 'ây' trong 'đây').", "approx": "ay"},
+      {"sound": "aɪ", "words": ["price", "my", "time", "high"], "ipa": "/aɪ/", "guide": "Từ /a/ sang /ɪ/ (như 'ai').", "approx": "ai"},
+      {"sound": "ɔɪ", "words": ["choice", "boy", "toy", "coin"], "ipa": "/ɔɪ/", "guide": "Từ /ɔ/ sang /ɪ/ (như 'ôi').", "approx": "oy"},
+      {"sound": "əʊ", "words": ["goat", "no", "show", "home"], "ipa": "/əʊ/", "guide": "Từ /ə/ sang /ʊ/ (như 'âu' trong 'âu').", "approx": "oh"},
+      {"sound": "aʊ", "words": ["mouth", "now", "how", "out"], "ipa": "/aʊ/", "guide": "Từ /a/ sang /ʊ/ (như 'ao').", "approx": "ow"}
+    ]
+  },
+  "centring": {
+    "title": "Centring Diphthongs",
+    "items": [
+      {"sound": "ɪə", "words": ["near", "here", "year", "beer"], "ipa": "/ɪə/", "guide": "Từ /ɪ/ sang /ə/ (hướng tâm).", "approx": "ear"},
+      {"sound": "eə", "words": ["square", "hair", "care", "there"], "ipa": "/eə/", "guide": "Từ /e/ sang /ə/.", "approx": "air"},
+      {"sound": "ʊə", "words": ["tour", "poor", "sure", "cure"], "ipa": "/ʊə/", "guide": "Từ /ʊ/ sang /ə/ (ít dùng hiện nay).", "approx": "oor"}
+    ]
+  },
+  "plosives": {
+    "title": "Plosives (Tắc)",
+    "items": [
+      {"sound": "p", "words": ["pen", "happy", "stop"], "ipa": "/p/", "guide": "Vô thanh, môi bật.", "approx": "p"},
+      {"sound": "b", "words": ["bad", "baby", "rub"], "ipa": "/b/", "guide": "Hữu thanh, môi bật.", "approx": "b"},
+      {"sound": "t", "words": ["ten", "tight", "button"], "ipa": "/t/", "guide": "Vô thanh, lưỡi bật nướu.", "approx": "t"},
+      {"sound": "d", "words": ["dad", "did", "bed"], "ipa": "/d/", "guide": "Hữu thanh, lưỡi bật nướu.", "approx": "d"},
+      {"sound": "k", "words": ["cat", "key", "school"], "ipa": "/k/", "guide": "Vô thanh, lưỡi bật vòm.", "approx": "k"},
+      {"sound": "g", "words": ["get", "giggle", "bag"], "ipa": "/g/", "guide": "Hữu thanh, lưỡi bật vòm.", "approx": "g"}
+    ]
+  },
+  "fricatives": {
+    "title": "Fricatives (Xát)",
+    "items": [
+      {"sound": "f", "words": ["fan", "coffee", "photo"], "ipa": "/f/", "guide": "Vô thanh, răng chạm môi dưới.", "approx": "f"},
+      {"sound": "v", "words": ["van", "view", "move"], "ipa": "/v/", "guide": "Hữu thanh, răng chạm môi dưới.", "approx": "v"},
+      {"sound": "θ", "words": ["thin", "think", "both"], "ipa": "/θ/", "guide": "Vô thanh, lưỡi giữa hai răng.", "approx": "th"},
+      {"sound": "ð", "words": ["this", "mother", "breathe"], "ipa": "/ð/", "guide": "Hữu thanh, lưỡi giữa hai răng.", "approx": "th"},
+      {"sound": "s", "words": ["soon", "city", "miss"], "ipa": "/s/", "guide": "Vô thanh, hơi xát qua răng.", "approx": "s"},
+      {"sound": "z", "words": ["zoo", "lazy", "rose"], "ipa": "/z/", "guide": "Hữu thanh, hơi xát qua răng.", "approx": "z"},
+      {"sound": "ʃ", "words": ["ship", "sure", "ocean"], "ipa": "/ʃ/", "guide": "Vô thanh, môi chụm (sh).", "approx": "sh"},
+      {"sound": "ʒ", "words": ["vision", "measure", "genre"], "ipa": "/ʒ/", "guide": "Hữu thanh, môi chụm (zh).", "approx": "zh"},
+      {"sound": "h", "words": ["hat", "who", "behind"], "ipa": "/h/", "guide": "Hơi thở mạnh từ cổ họng.", "approx": "h"}
+    ]
+  },
+  "affricates_nasals": {
+    "title": "Affricates & Nasals",
+    "items": [
+      {"sound": "tʃ", "words": ["chin", "chair", "church"], "ipa": "/tʃ/", "guide": "Vô thanh, kết hợp t + ʃ.", "approx": "ch"},
+      {"sound": "dʒ", "words": ["gin", "judge", "bridge"], "ipa": "/dʒ/", "guide": "Hữu thanh, kết hợp d + ʒ.", "approx": "j"},
+      {"sound": "m", "words": ["man", "summer", "home"], "ipa": "/m/", "guide": "Mũi, môi đóng.", "approx": "m"},
+      {"sound": "n", "words": ["no", "nice", "know"], "ipa": "/n/", "guide": "Mũi, lưỡi chạm nướu.", "approx": "n"},
+      {"sound": "ŋ", "words": ["sing", "finger", "ring"], "ipa": "/ŋ/", "guide": "Mũi, lưỡi chạm vòm (ng).", "approx": "ng"}
+    ]
+  },
+  "approximants": {
+    "title": "Approximants (Bán nguyên âm)",
+    "items": [
+      {"sound": "l", "words": ["let", "little", "yellow"], "ipa": "/l/", "guide": "Bên lưỡi, khí thoát hai bên.", "approx": "l"},
+      {"sound": "r", "words": ["red", "try", "very"], "ipa": "/r/", "guide": "Lưỡi cong, không rung (Anh-Anh).", "approx": "r"},
+      {"sound": "j", "words": ["yes", "yellow", "beauty"], "ipa": "/j/", "guide": "Bán nguyên âm (y).", "approx": "y"},
+      {"sound": "w", "words": ["wet", "one", "when", "queen"], "ipa": "/w/", "guide": "Bán nguyên âm, môi tròn (w).", "approx": "w"}
+    ]
+  }
+}
